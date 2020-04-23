@@ -1,0 +1,54 @@
+{
+  "pages": [
+    "pages/index/main",
+    "pages/rank/main",
+    "pages/photographic/main",
+    "pages/apply/main",
+    "pages/PlayerDetails/main",
+    "pages/gift/main",
+    "pages/activity/main"
+  ],
+  
+  "requiredBackgroundModes":["audio"],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#999",
+    "backgroundColor": "#fafafa",
+    "selectedColor": "#333",
+    "borderStyle": "white",
+    "list": [
+      {
+        "text": "首页",
+        "pagePath": "pages/photographic/main",
+        "iconPath": "static/tabs/home.png",
+        "selectedIconPath": "static/tabs/home-active.png"
+      },
+      {
+        "text": "排行榜",
+        "pagePath": "pages/rank/main",
+        "iconPath": "static/tabs/orders.png",
+        "selectedIconPath": "static/tabs/orders-active.png"
+      }
+    ],
+    "items": [
+      {
+        "name": "首页",
+        "pagePath": "pages/photographic/main",
+        "icon": "static/tabs/home.png",
+        "activeIcon": "static/tabs/home-active.png"
+      },
+      {
+        "name": "排行榜",
+        "pagePath": "pages/rank/main",
+        "icon": "static/tabs/orders.png",
+        "activeIcon": "static/tabs/orders-active.png"
+      }
+    ],
+    "position": "bottom"
+  }
+}

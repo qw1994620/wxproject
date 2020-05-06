@@ -6,103 +6,99 @@
     </div>
     <div class="title">票数排行榜</div>
     <div class="content">
-      <div v-for="(item,index) in palyer" :key="index">
-        <img :src="item.img" alt />
-        <div>
-          <span>{{item.name}}</span>
-          <p>{{item.applynum}}票</p>
+      <div class="top">
+        <div class="two">
+          <span class="rank">NO.2</span>
+          <img :src="palyerlist[1].coverImg" alt />
+          <span>{{palyerlist[1].name}}</span>
+          <p>{{palyerlist[1].ticket}}票</p>
         </div>
+        <div class="one">
+          <span class="rank">NO.1</span>
+          <img :src="palyerlist[0].coverImg" alt />
+          <span>{{palyerlist[0].name}}</span>
+          <p>{{palyerlist[0].ticket}}票</p>
+        </div>
+        <div class="three">
+          <span class="rank">NO.3</span>
+          <img :src="palyerlist[2].coverImg" alt />
+          <span>{{palyerlist[2].name}}</span>
+          <p>{{palyerlist[2].ticket}}票</p>
+        </div>
+      </div>
+      <div v-for="(item,index) in palyerlist1" :key="index" class="bottom">
+        <img :src="item.coverImg" alt />
+        <div class="text">
+          <span>{{item.name}}</span>
+          <p>{{item.ticket}}票</p>
+        </div>
+        <div class="bottom-rank">{{item.ranknum}}</div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import Times from "@/components/time";
-
 export default {
   props: [],
   data() {
     return {
-      palyer: [
-        {
-          name: "令狐冲",
-          img:
-            "http://img1.imgtn.bdimg.com/it/u=2047220947,3490962718&fm=26&gp=0.jpg",
-          applynum: "4396"
-        },
-        {
-          name: "张无忌",
-          img:
-            "http://img1.imgtn.bdimg.com/it/u=2047220947,3490962718&fm=26&gp=0.jpg",
-          applynum: "4396"
-        },
-        {
-          name: "小鱼儿",
-          img:
-            "http://img1.imgtn.bdimg.com/it/u=2047220947,3490962718&fm=26&gp=0.jpg",
-          applynum: "4396"
-        },
-        {
-          name: "小鱼儿",
-          img:
-            "http://img1.imgtn.bdimg.com/it/u=2047220947,3490962718&fm=26&gp=0.jpg",
-          applynum: "4396"
-        },
-        {
-          name: "小鱼儿",
-          img:
-            "http://img1.imgtn.bdimg.com/it/u=2047220947,3490962718&fm=26&gp=0.jpg",
-          applynum: "4396"
-        },
-        {
-          name: "小鱼儿",
-          img:
-            "http://img1.imgtn.bdimg.com/it/u=2047220947,3490962718&fm=26&gp=0.jpg",
-          applynum: "4396"
-        },
-        {
-          name: "小鱼儿",
-          img:
-            "http://img1.imgtn.bdimg.com/it/u=2047220947,3490962718&fm=26&gp=0.jpg",
-          applynum: "4396"
-        },
-        {
-          name: "小鱼儿",
-          img:
-            "http://img1.imgtn.bdimg.com/it/u=2047220947,3490962718&fm=26&gp=0.jpg",
-          applynum: "4396"
-        },
-        {
-          name: "小鱼儿",
-          img:
-            "http://img1.imgtn.bdimg.com/it/u=2047220947,3490962718&fm=26&gp=0.jpg",
-          applynum: "4396"
-        },
-        {
-          name: "小鱼儿",
-          img:
-            "http://img1.imgtn.bdimg.com/it/u=2047220947,3490962718&fm=26&gp=0.jpg",
-          applynum: "4396"
-        }
-      ]
+      palyerlist: [
+      {
+        name:"",
+        coverImg:"",
+        ticket:""
+      },
+      {
+        name:"",
+        coverImg:"",
+        ticket:""
+      },
+      {
+        name:"",
+        coverImg:"",
+        ticket:""
+      },
+      ],
+      palyerlist1:[
+       
+       
+      ],
+      
     };
   },
-  computed: {},
+  computed: {
+
+  },
   created() {},
   mounted() {
-   
+    this.$fly
+      .post("https://mp.zymcloud.com/hp-hd/applet/activity/playerRank", {
+        activityId: 1
+        // openid:res.data
+      })
+      .then(res => {
+        console.log(`后台交互拿回数据playerRank:`, res);
+        // 获取到后台重写的session数据，可以通过vuex做本地保存
+        // console.log();
+        this.palyerlist=res.data.data.playerList
+        this.palyerlist1=res.data.data.playerList1
+         for(var i=0;i<this.palyerlist1.length;i++){
+           this.palyerlist1[i].ranknum=4+i
+         }
+ 
+      })
+      .catch(err => {
+        console.log(`自动请求api失败 err:`, err);
+      });
   },
   watch: {},
-  methods: {
-   
-  },
+  methods: {},
   components: {
     Times
   }
 };
 </script>
-
 <style  >
 body {
   background-color: #eee;
@@ -120,46 +116,55 @@ body {
   line-height: 46px;
   color: white;
 }
-.content {
+.top{
   display: flex;
-  margin: 10px;
-  justify-content: space-between;
-  flex-flow: wrap;
+  justify-content: space-around;
+  text-align: center;
+  margin: 20px 10px;
 }
-.content div:nth-child(-n + 3) {
-  width: 30%;
+.top img{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+.top p{
+  color:  rgb(49, 201, 178);
+}
+.two{
   display: flex;
   flex-direction: column;
-  text-align: center;
+  margin: 20px 0;
 }
-.content div:nth-child(-n + 3) div {
-  width: 100%;
+.one{
+  display: flex;
+  flex-direction: column;
 }
-.content div:nth-child(-n + 3) img {
-  width: 60px;
-  height: 60px;
+.one img{
+   width: 70px;
+  height: 70px;
+}
+.three{
+  display: flex;
+  flex-direction: column;
+  margin: 20px 0;
+
+}
+.bottom{
+ display: flex;
+ justify-content:space-between;
+margin: 20px 30px;
+}
+.bottom img{
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  margin: 10px auto;
 }
-.content div:nth-child(-n + 3) p {
-  color: rgb(49, 201, 178);
+.text{
+ flex: 1;
+display: flex;
+flex-direction: column;
+justify-content: space-around;
+margin: 0 5px;
 }
 
-.content div:nth-child(n + 4) {
-  margin: 0 10px;
-  width: 100%;
-  display: flex;
-}
-.content div:nth-child(n + 4) img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  margin: 10px 0;
-}
-
-.content div:nth-child(n + 4) div {
-  display: flex;
-  flex-flow: column;
-  justify-content: space-around;
-}
 </style>

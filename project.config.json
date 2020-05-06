@@ -1,16 +1,27 @@
 {
 	"description": "项目配置文件。",
 	"setting": {
-		"urlCheck": true,
+		"urlCheck": false,
 		"es6": false,
 		"postcss": true,
 		"minified": true,
 		"newFeature": true,
-		"checkSiteMap":false
+		"coverView": true,
+		"autoAudits": false,
+		"showShadowRootInWxmlPanel": true,
+		"scopeDataCheck": false,
+		"checkInvalidKey": true,
+		"checkSiteMap": false,
+		"uploadWithSourceMap": true,
+		"babelSetting": {
+			"ignore": [],
+			"disablePlugins": [],
+			"outputPath": ""
+		}
 	},
 	"miniprogramRoot": "dist/wx/",
 	"compileType": "miniprogram",
-	"appid": "wxa9f4b66cabaad917",
+	"appid": "wx07c16a86468ddc2f",
 	"projectname": "penghong",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
@@ -77,6 +88,27 @@
 					"id": -1,
 					"name": "pages/apply/main",
 					"pathName": "pages/apply/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/questionnaire/index/main",
+					"pathName": "pages/questionnaire/index/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/activity/main",
+					"pathName": "pages/activity/main",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/PlayerDetails/main",
+					"pathName": "pages/PlayerDetails/main",
 					"scene": null
 				}
 			]

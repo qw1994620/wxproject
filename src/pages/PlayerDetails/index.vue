@@ -1,23 +1,23 @@
 <template>
   <div>
     <div class="header">
-      <img :src="imgurl" class="headimg" />
+      <img :src="player.coverImg" class="headimg" />
     </div>
-    <div v-for="(item,index) in total" :key="index" class="totalBox">
+    <div class="totalBox">
       <div>
-        <span>{{item.rank}}</span>
+        <span>{{player.i}}</span>
         <span>排名</span>
       </div>
       <div>
-        <span>{{item.num}}</span>
+        <span>{{player.ticket}}</span>
         <span>票数</span>
       </div>
       <div>
-        <span>{{item.gift}}</span>
+        <span>{{player.gift}}</span>
         <span>礼物</span>
       </div>
       <div>
-        <span>{{item.view}}</span>
+        <span>{{player.browse}}</span>
         <span>浏览量</span>
       </div>
     </div>
@@ -27,20 +27,35 @@
     </div>
     <div class="palyerDescription">
       <div class="palyerDescriptionTitle">选手照片</div>
-      <img class="palyerDescriptionImg" :src="imgurl" />
+      <img class="palyerDescriptionImg" :src="player.coverImg" />
     </div>
     <div class="palyerDescription">
       <div class="palyerDescriptionTitle palyerContribution">票数贡献榜</div>
       <div>
-       
-        <scroll-view scroll-y="true" style="height: 400rpx;" @scrolltoupper="upper" @scrolltolower="lower" @scroll="scroll" scroll-into-view="toView" scroll-top="scrollTop">
-          
-           <img src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2572598446,712599389&fm=26&gp=0.jpg" alt="">
+        <scroll-view
+          scroll-y="true"
+          style="height: 400rpx;"
+          @scrolltoupper="upper"
+          @scrolltolower="lower"
+          @scroll="scroll"
+          scroll-into-view="toView"
+          scroll-top="scrollTop"
+        >
+          <div v-if="!giftRank">
+            <img
+              src="https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=2572598446,712599389&fm=26&gp=0.jpg"
+            />
+            <button type="primary" @click="gogift()">送ta礼物加票</button>
+          </div>
+          <div v-else>
+            <div v-for="(item,index) in playerGiftlist" :key="index" class="playerGiftlist">
+              <img :src="item.extend3" alt class="touxiang" />
+              <span class="applyName">{{item.extend2}}</span>
+              <span class="applyNum">{{item.ticket}}票</span>
+            </div>
+          </div>
         </scroll-view>
-      
-      
       </div>
-      <button type="primary" @click="gogift()">送ta礼物加票</button>
     </div>
     <div class="palyerDescription">
       <div class="palyerDescriptionTitle palyerContribution">投票记录</div>
@@ -66,16 +81,9 @@ export default {
   props: [],
   data() {
     return {
-      imgurl:
-        "https://img-oss.yunshanmeicai.com/goods/default/31d8dfa4-0d7b-4694-80f9-41b07c9d0a3a.png",
-      total: [
-        {
-          rank: "6",
-          num: "20",
-          gift: "1",
-          view: "199"
-        }
-      ],
+      player: {},
+      giftRank: true,
+      playerGiftlist: [],
       list: [
         {
           name: "",
@@ -86,6 +94,27 @@ export default {
     };
   },
   computed: {},
+  onLoad(options) {
+    this.$fly
+      .post("https://mp.zymcloud.com/hp-hd/applet/activity/player", {
+        activityId: 1,
+        id: options.id
+      })
+      .then(res => {
+        console.table(`后台交互拿回数据Player:`, res);
+        // 获取到后台重写的session数据，可以通过vuex做本地保存
+        this.player = res.data.data.player;
+        if (res.data.data.hdPlayerGiftlist.length) {
+          this.playerGiftlist = res.data.data.hdPlayerGiftlist;
+          this.giftRank = true;
+        } else {
+          this.giftRank = false;
+        }
+      })
+      .catch(err => {
+        console.log(`自动请求api失败 err:`, err);
+      });
+  },
   created() {},
   mounted() {},
   watch: {},
@@ -111,7 +140,7 @@ export default {
       });
       console.log(this.list);
     },
-    gogift(){
+    gogift() {
       wx.reLaunch({
         url: "../gift/main"
       });
@@ -149,6 +178,20 @@ body {
 .totalBox div span {
   color: white;
   text-align: center;
+}
+.playerGiftlist {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 10px;
+}
+.playerGiftlist .touxiang {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+.playerGiftlist .applyNum {
+  color: rgb(49, 201, 177);
 }
 .palyerDescription {
   margin: 10px;

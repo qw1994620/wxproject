@@ -37,32 +37,37 @@ export default {
       list:[
         {
           id:"1",
-          title:"宏鹏教育程序员美丽XXXXXXXXXX",
+          title:"",//活动名
           url:"../photographic/main",
-          hot:"6698",
+          hot:"", //浏览量
           images:"https://img-oss.yunshanmeicai.com/goods/default/31d8dfa4-0d7b-4694-80f9-41b07c9d0a3a.png"
         },
-          {
-          id:"2",
-          title:"宏鹏教育程序员美丽XXXXXXXXXX",
-          url:"../activity/main",
-          hot:"6698",
-          images:"https://img-oss.yunshanmeicai.com/goods/default/31d8dfa4-0d7b-4694-80f9-41b07c9d0a3a.png"
-        },  {
-          id:"3",
-          title:"宏鹏教育程序员美丽XXXXXXXXXX",
-          url:"../activity/main",
-          hot:"6698",
-          images:"https://img-oss.yunshanmeicai.com/goods/default/31d8dfa4-0d7b-4694-80f9-41b07c9d0a3a.png"
-        },  {
-          id:"4",
-          title:"宏鹏教育程序员美丽XXXXXXXXXX",
-          url:"../activity/main",
-          hot:"6698",
-          images:"https://img-oss.yunshanmeicai.com/goods/default/31d8dfa4-0d7b-4694-80f9-41b07c9d0a3a.png"
-        },
+         
       ]
     };
+  },
+  mounted() {
+     this.$fly
+      .post("https://mp.zymcloud.com/hp-hd/applet/activity/getActivityList", {
+     
+        // openid:res.data
+      })
+      .then(res => {
+        console.log(`后台交互拿回数据getActivityList:`, res);
+        // 获取到后台重写的session数据，可以通过vuex做本地保存
+      
+         this.list[0].hot = res.data.data[0].browse; //活动浏览量渲染 
+         this.list[0].title = res.data.data[0].name; //活动名渲染 
+        // this.total.num = res.data.data.hdActivity.enroll; //已报名数据渲染
+        // this.total.poll = res.data.data.hdActivity.sumVote; //总票数数据渲染
+        // this.total.view = res.data.data.hdActivity.browse; //总浏览量数据渲染
+        // this.music = res.data.data.hdActivity.music; //总浏览量数据渲染
+      })
+      .catch(err => {
+        console.log(`自动请求api失败 err:`, err);
+      });
+    
+
   },
   methods: {},
   computed: {}

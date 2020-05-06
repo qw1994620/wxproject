@@ -6,7 +6,14 @@
     "pages/apply/main",
     "pages/PlayerDetails/main",
     "pages/gift/main",
-    "pages/activity/main"
+    "pages/activity/main",
+    "pages/questionnaire/index/main",
+    "pages/questionnaire/question1/main",
+    "pages/questionnaire/question2/main",
+    "pages/questionnaire/question3/main",
+    "pages/questionnaire/question4/main",
+    "pages/questionnaire/question5/main"
+    
   ],
   
   "requiredBackgroundModes":["audio"],

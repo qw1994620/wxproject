@@ -1,127 +1,168 @@
 <template>
   <view>
-    
     <Swiper :images="images" />
-    <div v-for="(item,index) in total" :key="index" class="totalBox">
+    <div class="totalBox">
       <div>
-        <span>{{item.num}}</span>
+        <span>{{total.num}}</span>
         <span>已报名</span>
       </div>
       <div>
-        <span>{{item.poll}}</span>
+        <span>{{total.poll}}</span>
         <span>总投票</span>
       </div>
       <div>
-        <span>{{item.view}}</span>
+        <span>{{total.view}}</span>
         <span>浏览量</span>
       </div>
     </div>
     <button class="apply" @click="goapply()">我要报名</button>
-    <div class="time"><Times /></div>
-    
-    <div class="search">
-      <input type="text" class="inputText" />
-      <input type="button" value="搜索" class="inputButton" />
+    <div class="time">
+      <Times />
     </div>
-     <Picker />
+
+    <div class="search">
+      <input type="text" class="inputText" v-model="searchVal"/>
+      <input type="button" value="搜索" class="inputButton" @click="search()"/>
+    </div>
+    <picker @change="bindPickerChange" :value="index" :range="array">
+      <view class="picker">
+        {{array[index]}}
+        <span class="iconfont iconxia"></span>
+      </view>
+    </picker>
     <ul v-for="(item, index) in list" :key="index">
       <li>
-        <a :href="item.url">
-          <img :src="item.images" mode="scaleToFill" />
+        <a @click="PlayerDetails(item.id)">
+          <img :src="item.coverImg" mode="scaleToFill" />
           <span class="name">{{item.name}}</span>
-          <span class="piao">{{item.num}}票</span>
+          <span class="piao">{{item.ticket}}票</span>
           <button>投票</button>
         </a>
       </li>
     </ul>
 
     <div class="kefu">
-      <div>
-      列表
-      </div>
-      <div>
-        关注
-      </div>
-      <div>
-        客服
-      </div>
+      <div>列表</div>
+      <div>关注</div>
+      <div>客服</div>
     </div>
-    <div class="bgmusic"><Bgmusic /></div>
+    <div class="bgmusic">
+      <Bgmusic />
+    </div>
   </view>
 </template>
 <script>
 import Swiper from "@/components/swiper";
 import Gohome from "@/components/gohome";
-import Picker from "@/components/picker";
 import Times from "@/components/time";
 import Bgmusic from "@/components/bgmusic";
 
 export default {
-  components: { Swiper, Gohome ,Picker,Times,Bgmusic},
+  components: { Swiper, Gohome, Times, Bgmusic },
   data() {
     return {
       images: [
         {
-          url:
-            "https://img-oss.yunshanmeicai.com/goods/default/31d8dfa4-0d7b-4694-80f9-41b07c9d0a3a.png"
-        },
-        {
-          url:
-            "https://img-oss.yunshanmeicai.com/goods/default/e83c8f0f-4acc-4729-bcbb-294f2b314977.jpg"
+          url: ""
         }
       ],
-      
-      total: [
-        {
-          num: "60",
-          poll: "1555",
-          view: "9852"
-        }
+      music: "",
+      total: {
+        num: "", //已报名
+        poll: "", //总投票
+        view: "" //浏览量
+      },
+      alllist: [],
+      list: [],
+      array: [
+        "选择分组",
+        "北大青鸟鲁广校区",
+        "北大青鸟光谷校区",
+        "北大青鸟光谷学院",
+        "课工场华中直营总校",
+        "课工场徐东校区",
+        "课工场光谷校区",
+        "课工场郑州兰德校区",
+        "北大青鸟徐东校区"
       ],
-      list: [
-        {
-          name: "张三",
-          url: "../PlayerDetails/main",
-          num: "99",
-          images:
-            "https://img-oss.yunshanmeicai.com/goods/default/31d8dfa4-0d7b-4694-80f9-41b07c9d0a3a.png"
-        },
-        {
-          name: "李四",
-          num: "88",
-          images:
-            "https://img-oss.yunshanmeicai.com/goods/default/e83c8f0f-4acc-4729-bcbb-294f2b314977.jpg"
-        },
-        {
-          name: "王五",
-          num: "77",
-          images:
-            "https://img-oss.yunshanmeicai.com/goods/default/e83c8f0f-4acc-4729-bcbb-294f2b314977.jpg"
-        },
-        {
-          name: "老六",
-          num: "66",
-          images:
-            "https://img-oss.yunshanmeicai.com/goods/default/31d8dfa4-0d7b-4694-80f9-41b07c9d0a3a.png"
-        }
-      ]
+      index: 0,
+      searchVal:""
     };
   },
+  beforeCreate(){
+    // this.getSetting();
+ 
+  },
+  onLoad() {
+     this.$fly
+      .post("https://mp.zymcloud.com/hp-hd/applet/activity/list", {
+        activityId: 1
+        // openid:res.data
+      })
+      .then(res => {
+        console.log(`后台交互拿回数据list:`, res);
+        // 获取到后台重写的session数据，可以通过vuex做本地保存
+        console.log();
+        this.images[0].url = res.data.data.coverList[0].url; //banner图片渲染
+        this.total.num = res.data.data.hdActivity.enroll; //已报名数据渲染
+        this.total.poll = res.data.data.hdActivity.sumVote; //总票数数据渲染
+        this.total.view = res.data.data.hdActivity.browse; //总浏览量数据渲染
+        
+      })
+      .catch(err => {
+        console.log(`自动请求api失败 err:`, err);
+      });
+  },
+  mounted() {
+    //获取玩家数据
+    this.$fly
+      .post("https://mp.zymcloud.com/hp-hd/applet/activity/activityPlayer", {
+        activityId: 1
+        // openid:res.data
+      })
+      .then(res => {
+        console.table(`后台交互拿回数据activityPlayer:`, res);
+        // 获取到后台重写的session数据，可以通过vuex做本地保存
+        this.alllist = res.data.rows;
+        this.list = res.data.rows;
+      })
+      .catch(err => {
+        console.log(`自动请求api失败 err:`, err);
+      });
+  },
   methods: {
-     goapply() {
-    mpvue.reLaunch({
-        url: '../apply/main'
-    });
-      
+    goapply() {
+      mpvue.reLaunch({
+        url: "../apply/main"
+      });
     },
-     bindPickerChange(e) {
-    console.log('picker发送选择改变，携带值为', e.detail.value)
-    this.setData({
-      index: e.detail.value
-    })
-  }
-   
-    
+    PlayerDetails(id){
+  const url = "../PlayerDetails/main?id="+id
+          wx.navigateTo({ url })
+    },
+    search(){
+      if (!this.searchVal) {
+         this.list = this.alllist
+      }else{
+        this.list = this.alllist.filter(element => {
+          return !element.name.indexOf(this.searchVal);
+        });
+      }
+    },
+    bindPickerChange(e) {
+      console.log("picker发送选择改变，携带值为", e.mp.detail.value);
+      this.index = e.mp.detail.value; //groupName
+      
+      console.log(this.array[this.index]);
+
+      if (this.index == 0) {
+        this.list = this.alllist;
+      } else {
+        this.list = this.alllist.filter(element => {
+          return element.groupName === this.array[this.index];
+        });
+      }
+    }
   },
   computed: {}
 };
@@ -129,6 +170,21 @@ export default {
 <style>
 body {
   background-color: #eee;
+}
+.picker {
+  float: left;
+
+  width: 50%;
+  height: 30px;
+  line-height: 30px;
+  margin: 10px 10px;
+  background-color: rgb(49, 201, 177);
+  color: white;
+  text-indent: 2em;
+}
+.picker span {
+  float: right;
+  margin-right: 10px;
 }
 .totalBox {
   margin: 20px 10px;
@@ -164,7 +220,6 @@ body {
 }
 .search {
   margin: 10px 10px;
- 
 }
 input {
   float: left;
@@ -172,14 +227,14 @@ input {
 .inputText {
   width: 70%;
   background-color: white;
-   height: 46px;
+  height: 46px;
 }
 .inputButton {
   width: 30%;
   background-color: rgb(49, 201, 177);
   color: white;
-   height: 46px;
-   line-height: 46px;
+  height: 46px;
+  line-height: 46px;
 }
 .change {
   float: left;
@@ -216,30 +271,30 @@ li a span {
   display: block;
   margin-left: 10px;
 }
-.piao{
-  color: rgb(49, 201, 177)
+.piao {
+  color: rgb(49, 201, 177);
 }
-li button{
+li button {
   margin: 10px;
   height: 30px;
   line-height: 30px;
   background-color: rgb(49, 201, 177);
 }
 
-.kefu{
+.kefu {
   position: fixed;
   bottom: 50px;
 }
-.kefu div{
+.kefu div {
   background-color: rgb(225, 255, 255);
   border: 1px solid rgb(49, 201, 177);
   width: 34px;
   height: 34px;
   line-height: 34px;
   font-size: 12px;
-margin-bottom: 4px;
+  margin-bottom: 4px;
 }
-.bgmusic{
+.bgmusic {
   position: fixed;
   top: 80px;
   right: 50px;
